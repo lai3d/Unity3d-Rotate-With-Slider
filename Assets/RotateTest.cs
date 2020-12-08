@@ -1,21 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class RotateTest : MonoBehaviour
 {
-    public GameObject[] cubes;
+    [SerializeField]
+    private GameObject[] cubes;
     
-    public GameObject selectedCube;
+    [SerializeField]
+    private GameObject selectedCube;
 
-    public Slider slider;
-    public Text currentAngle;
-    public Dropdown dropdownCubes;
+    [SerializeField]
+    private Slider slider;
+    [SerializeField]
+    private Text currentAngle;
+    [SerializeField]
+    private Dropdown dropdownCubes;
     
-    public float min = -180f;
-    public float max = 180f;
+    [SerializeField]
+    private float min = -180f;
+    [SerializeField]
+    private float max = 180f;
     
     // Start is called before the first frame update
     void Start()
@@ -41,16 +46,15 @@ public class RotateTest : MonoBehaviour
             currentAngle.text = round.ToString(); 
             OnRotate(round);
         });
-
         
         Vector3 normal = -selectedCube.transform.parent.forward;
         Quaternion rotWorld = Quaternion.LookRotation(selectedCube.transform.parent.right, normal);
         Quaternion rotLocal = Quaternion.Inverse(selectedCube.transform.parent.rotation) * rotWorld;
         
         selectedCube.transform.localRotation = rotLocal;
-        
-        //slider.value = GetCubeAngle();
-        SetSliderValue(GetCubeAngle(), true);
+
+        //SetSliderValue(GetCubeAngle(), true);
+        SelectCube(0);
     }
 
     private void SetSliderValue(float value, bool needNotify = true)
@@ -84,7 +88,7 @@ public class RotateTest : MonoBehaviour
         
         selectedCube.transform.localRotation = rotLocalCube * Quaternion.AngleAxis(rotationAngle, Vector3.up);
         
-        // verify
+        // for verify only
         Quaternion currentLocalRotation = selectedCube.transform.localRotation;
         Quaternion appliedRotation = Quaternion.Inverse(rotLocalCube) * currentLocalRotation;
 
@@ -105,9 +109,6 @@ public class RotateTest : MonoBehaviour
         selectedCube.GetComponent<MeshRenderer>().material.color = Color.red;
 
         float xAngle = GetCubeAngle();
-        
-        //slider.SetValueWithoutNotify(xAngle);
-        //currentAngle.text = xAngle.ToString();
         SetSliderValue(xAngle, false);
     }
 
@@ -120,7 +121,6 @@ public class RotateTest : MonoBehaviour
         Vector3 normal = -parent.forward;
         Quaternion rotWorldCube = Quaternion.LookRotation(parent.right, normal);
         Quaternion rotLocalCube = Quaternion.Inverse(parent.rotation) * rotWorldCube;
-        //selectedCube.transform.localRotation = rotLocalCube * Quaternion.AngleAxis(rotationAngle, Vector3.up);
 
         Quaternion currentLocalRotation = selectedCube.transform.localRotation;
         Quaternion appliedRotation = Quaternion.Inverse(rotLocalCube) * currentLocalRotation;
