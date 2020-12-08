@@ -36,41 +36,10 @@ public class RotateTest : MonoBehaviour
         
         slider.onValueChanged.AddListener(value =>
         {
-            currentAngle.text = value.ToString();
-
-            // Method 1
-            // rotated.transform.localRotation = Quaternion.Euler(value, 
-            //     rotated.transform.localRotation.eulerAngles.y, 
-            //     rotated.transform.localRotation.eulerAngles.z);
-
-            // Method 2
-            // float x = rotated.transform.localRotation.eulerAngles.x;
-            // float diff = value - x;
-            // Debug.Log($"diff {diff}, x {x}");
-            //
-            // rotated.transform.Rotate(rotated.transform.up, diff, Space.World);
+            float round = Mathf.RoundToInt(value);
             
-            // Method 3
-            /*{
-                Quaternion rotWorldCube = Quaternion.LookRotation(rotated.transform.parent.right, normal);
-                //rotWorldCube *= Quaternion.Euler(-rotated.transform.parent.forward * value);
-                //rotWorldCube *= Quaternion.Euler(rotated.transform.up * value);
-                //rotated.transform.rotation = Quaternion.AngleAxis(value, normal);
-                
-                Quaternion rotLocalCube = Quaternion.Inverse(rotated.transform.parent.rotation) * rotWorldCube;
-
-                //rotLocalCube *= Quaternion.Euler(value, 0f, 0f); // Not right!
-                
-                //rotLocalCube *= Quaternion.AngleAxis(value, normal);
-                //rotated.transform.localRotation = rotLocalCube;
-                
-                //rotated.transform.rotation = Quaternion.AngleAxis(value, normal);
-            }*/
-
-            // Method 4
-            {
-                OnRotate(value);
-            }
+            currentAngle.text = round.ToString(); 
+            OnRotate(round);
         });
 
         
@@ -80,20 +49,20 @@ public class RotateTest : MonoBehaviour
         
         selectedCube.transform.localRotation = rotLocal;
         
-        slider.value = GetCubeAngle();
-        
-        // rotated.transform.localRotation.ToAngleAxis(out float angle, out Vector3 axis);
-        // Debug.Log($"angle {angle}, axis x: {axis.x}, y: {axis.y}, z: {axis.z}");
-
-        //rotated.transform.rotation = Quaternion.AngleAxis(0, normal);
-        
-        //slider.value = rotLocal.eulerAngles.x;
+        //slider.value = GetCubeAngle();
+        SetSliderValue(GetCubeAngle(), true);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void SetSliderValue(float value, bool needNotify = true)
     {
+        float round = Mathf.RoundToInt(value);
         
+        if(needNotify)
+            slider.value = round;
+        else
+            slider.SetValueWithoutNotify(round);
+        
+        currentAngle.text = round.ToString();
     }
 
     private void OnRotate(float rotationAngle)
@@ -137,8 +106,9 @@ public class RotateTest : MonoBehaviour
 
         float xAngle = GetCubeAngle();
         
-        slider.SetValueWithoutNotify(xAngle);
-        currentAngle.text = xAngle.ToString();
+        //slider.SetValueWithoutNotify(xAngle);
+        //currentAngle.text = xAngle.ToString();
+        SetSliderValue(xAngle, false);
     }
 
     private float GetCubeAngle()
@@ -164,23 +134,6 @@ public class RotateTest : MonoBehaviour
         Debug.Log("angle: " + angle);
         Debug.Log("axis: " + axis);
         Debug.Log("EulerAngles: " + eulerAngles);
-/*
-        if (Mathf.Abs(axis.y) != 1)
-        {
-            // rotate around Y a little bit
-            Debug.Log("rotate around Y a little bit");
-            selectedCube.transform.localRotation = rotLocalCube * Quaternion.AngleAxis(0.0001f, Vector3.up);
-            currentLocalRotation = selectedCube.transform.localRotation;
-            appliedRotation = Quaternion.Inverse(rotLocalCube) * currentLocalRotation;
-            appliedRotation.ToAngleAxis(out angle, out axis);
-        }
-
-        eulerAngles = appliedRotation.eulerAngles;
-        
-        Debug.Log("angle: " + angle);
-        Debug.Log("axis: " + axis);
-        Debug.Log("EulerAngles: " + eulerAngles);
-*/
 
         float middleAngle = angle * axis.y;
                     
